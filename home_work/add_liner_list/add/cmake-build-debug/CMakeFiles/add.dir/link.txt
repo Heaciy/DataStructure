@@ -1,3 +1,0 @@
-"D:\code\CLion 2018.3.4\bin\cmake\win\bin\cmake.exe" -E remove -f CMakeFiles\add.dir/objects.a
-D:\code\CodeBlocks\MinGW\bin\ar.exe cr CMakeFiles\add.dir/objects.a @CMakeFiles\add.dir\objects1.rsp
-D:\code\CodeBlocks\MinGW\bin\gcc.exe -g   -Wl,--whole-archive CMakeFiles\add.dir/objects.a -Wl,--no-whole-archive  -o add.exe -Wl,--out-implib,libadd.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\add.dir\linklibs.rsp
