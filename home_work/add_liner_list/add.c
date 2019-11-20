@@ -28,6 +28,13 @@ snode create_polyn()
     return header;
 }
 
+/* void create_polyn(snode *head)
+{
+    *head = (snode)malloc(sizeof(struct node));
+    (*head)->next = NULL;
+} */
+
+
 void insert_at_last(snode head, int val, int val_n)
 {
     snode temp = head;

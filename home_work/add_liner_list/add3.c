@@ -1,9 +1,7 @@
 #include <stdio.h>
 #include <malloc.h>
-#include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-
 #define ISEMPTY printf("Empty List\n");
 const int MAX_NUM = 2; //多项式的个数；
 
@@ -15,31 +13,24 @@ struct node
 };
 
 typedef struct node *snode;
+/* 检查输入数据 */
 bool GetInt();
+/* 比较两个数据的大小 */
+int cmp(int a, int b);
+/* 从列表最后插入 */
 void insert_at_last();
+/* 输入数据并生成相应链表 */
 void input_data();
+/* 打印列表 */
 void print_polyn();
+/* 链表排序 */
 void sort_polyn();
-void equal_to();
+/* 释放内存 */
 void free_list();
+/* 两个链表相加 */
 snode add_polyn();
+/* 创建链表的头节点 */
 snode create_polyn();
-snode create_the_third_polyn();
-
-bool GetInt(int *value) {
-    char str[256] = {0};
-    fflush(stdin);
-    fgets(str, 256,stdin);
-    unsigned int index = 1;
-    int nTemp = 0;
-    if (str[0] == '-')
-    nTemp = 1;
-    for (index = nTemp; index < strlen(str); index++)
-        if (str[index] < '0' || str[index] > '9')
-            return false;
-    *value = atoi(str);
-    return true;
-}
 
 snode create_polyn()
 {
@@ -66,14 +57,13 @@ void input_data(snode head, int nOrder)
 {
     double val;
     int val_n, x;
-    printf("\nenter the num of items in the %dst polyn: ", nOrder);
-    scanf("%d", &x); //用头指针的数据域存放多项式的项数
-    head->val_n = x;
+    printf("\nThe items' num of %dst polyn: ", nOrder);
+    scanf("%d", &x);
     for (int i = 1; i <= x; i++)
     {
-        printf("value of %dst item: ", i);
+        printf("Input %dst item's value: ", i);
         scanf("%lf", &val);
-        printf("val_n of %dst item: ", i);
+        printf("Input %dst item's val_n: ", i);
         scanf("%d", &val_n);
         insert_at_last(head, val, val_n);
     }
@@ -81,7 +71,6 @@ void input_data(snode head, int nOrder)
 
 void print_polyn(snode head)
 {
-    //sort_polyn(head);
     snode temp = head->next;
     if (temp == NULL)
     {
@@ -89,41 +78,43 @@ void print_polyn(snode head)
     }
     else
     {
-        printf("%.2f X^%d", temp->value, temp->val_n);
-        for (temp = temp->next; temp != NULL; temp = temp->next)
+        if (temp->val_n != 0) //打印第一项
         {
-            if ((temp->value) > 0)
-                printf("+%.2f X^%d", temp->value, temp->val_n);
+            if (temp->val_n == 1)
+                printf("%.2f X", temp->value);
             else
                 printf("%.2f X^%d", temp->value, temp->val_n);
         }
-        printf("\n");
-    }
-}
-
-void equal_to(snode pre)
-{
-    snode temp = pre->next;
-    if ((temp != NULL) && (temp->next != NULL) && (temp->val_n == temp->next->val_n))
-    {
-        temp->value += temp->next->value;
-        snode nex = temp->next;
-        if (temp->value == 0)
-        {
-            snode now = temp;
-            temp = nex->next;
-            pre->next = temp;
-            free(now);
-            free(nex);
-            //printf("pdb\n");
-        }
         else
+            printf("%.2f ", temp->value);
+        for (temp = temp->next; temp != NULL; temp = temp->next)
         {
-            temp->next = nex->next;
-            //pre->next->next = nex ->next;
-            free(nex);
+            if ((temp->value) > 0)
+            {
+                if (temp->val_n != 0)
+                {
+                    if (temp->val_n == 1)
+                        printf("+%.2f X", temp->value);
+                    else
+                        printf("+%.2f X^%d", temp->value, temp->val_n);
+                }
+                else
+                    printf("+%.2f ", temp->value);
+            }
+            else
+            {
+                if (temp->val_n != 0)
+                {
+                    if (temp->val_n == 1)
+                        printf("%.2f X", temp->value);
+                    else
+                        printf("%.2f X^%d", temp->value, temp->val_n);
+                }
+                else
+                    printf("%.2f ", temp->value);
+            }
         }
-        equal_to(pre);
+        printf("\n");
     }
 }
 
@@ -149,43 +140,72 @@ void sort_polyn(snode head)
                 }
             }
         }
-        printf("After sort:\n");
-        print_polyn(head);
-        // 排序后进行最简化处理
-        printf("After equal_to():\n");
-        temp = head;
-        while (temp != NULL)
-        {
-            equal_to(temp);
-            temp = temp->next;
-        }
-    }
-    else
-    {
-        ISEMPTY;
     }
 }
 
-snode create_the_third_polyn(snode head1, snode head2)
+int cmp(int a, int b)
 {
-    snode Third_polyn = create_polyn();
-    snode temp1;
-    int i;
-    for (i = 0, temp1 = head1->next; i < head1->val_n; i++, temp1 = temp1->next) //拷贝链1
-    {
-        insert_at_last(Third_polyn, temp1->value, temp1->val_n);
-    }
-    for (i = 0, temp1 = head2->next; i < head2->val_n; i++, temp1 = temp1->next) //拷贝链2
-    {
-        insert_at_last(Third_polyn, temp1->value, temp1->val_n);
-    }
-    return Third_polyn;
+    if (a < b)
+        return -1;
+    else if (a == b)
+        return 0;
+    else
+        return 1;
 }
 
 snode add_polyn(snode head1, snode head2)
 {
-    snode result = create_the_third_polyn(head1, head2);
-    sort_polyn(result);
+    int sum;
+    snode result = create_polyn();
+    sort_polyn(head1);
+    sort_polyn(head2);
+    snode now1, now2;
+    now1 = head1->next;
+    now2 = head2->next;
+    while (now1 && now2)
+    {
+        switch (cmp(now1->val_n, now2->val_n))
+        {
+        case -1:
+            insert_at_last(result, now1->value, now1->val_n);
+            now1 = now1->next;
+            break;
+        case 0:
+            sum = now1->value + now2->value;
+            if (sum != 0)
+            {
+                insert_at_last(result, sum, now1->val_n);
+                now1 = now1->next;
+            }
+            else
+            {
+                now1 = now1->next;
+            }
+            now2 = now2->next;
+            break;
+        case 1:
+            insert_at_last(result, now2->value, now2->val_n);
+            now2 = now2->next;
+
+            break;
+        }
+    }
+    if (now1 != NULL)
+    {
+        while (now1 != NULL)
+        {
+            insert_at_last(result, now1->value, now1->val_n);
+            now1 = now1->next;
+        }
+    }
+    if (now2 != NULL)
+    {
+        while (now2 != NULL)
+        {
+            insert_at_last(result, now2->value, now2->val_n);
+            now2 = now2->next;
+        }
+    }
     return result;
 }
 
@@ -197,10 +217,8 @@ void free_list(snode head)
     {
         temp = del->next;
         free(del);
-        printf("*");
         del = temp;
     }
-    printf("List Freed\n");
 }
 
 int main()
@@ -210,15 +228,16 @@ int main()
     {
         head[i] = create_polyn();
         input_data(head[i], i + 1);
+        printf("The %dst polyn: ", i + 1);
         print_polyn(head[i]);
-        // sort_polyn(head[i]);
     }
     printf("\n");
 
     snode result = add_polyn(head[0], head[1]);
+    printf("The sum :");
     print_polyn(result);
     free_list(result);
-    free_list(head[0]);
-    free_list(head[1]);
+    free(head[0]);
+    free(head[1]);
     return 0;
 }
