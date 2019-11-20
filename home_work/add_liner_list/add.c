@@ -166,15 +166,7 @@ void free_list(snode head)
     {
         temp = del->next;
         free(del);
-        if (temp != NULL)
-        {
-            del = temp;
-            temp = del->next;
-        }
-        else
-        {
-            break;
-        }
+        del = temp;
     }
     printf("List Freed\n");
 }
