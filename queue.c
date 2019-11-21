@@ -51,7 +51,7 @@ void EnQueue(int X, Queue Q)
     {
         Q->Size++;
         Q->Rear = Succ(Q->Rear, Q);
-        Q->Array[Q->Array] = X;
+        Q->Array[Q->Rear] = X;
     }
 }
 
