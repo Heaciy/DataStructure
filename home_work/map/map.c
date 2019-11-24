@@ -233,8 +233,7 @@ int PreOrderTraverse(BiTree T, int depth)
 }
 
 /* ¥¶¿ÌµÿÕº */
-// int gMap[ROW][COL];
-int gMap[15][15];
+int gMap[ROW][COL];
 void InitDungeon()
 {
     int x, y;
