@@ -212,7 +212,7 @@ int GetLeaves(BiTree T, BiTreeNode ***pLeaves)
     } while (tag != 0);
     free(stack1);
     free(stack2);
-    pLeaves = &leaves;
+    *pLeaves = leaves;
     return count;
 }
 
