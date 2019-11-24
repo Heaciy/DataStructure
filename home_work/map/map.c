@@ -175,7 +175,6 @@ int GetLeaves(BiTree T, BiTreeNode ***pLeaves)
         return 0;
     }
     count = CountLeaf(T); //叶子节点数组，长度与叶子节点数量相同
-    printf("count: %d\n",count);
     leaves = (BiTreeNode **)malloc(sizeof(BiTreeNode *) * count);
     height = BiTreeHeight(T); //栈的最大深度与树的深度一致
     stack1 = (BiTreeNode **)malloc(sizeof(BiTreeNode *) * (height + 1));
@@ -283,7 +282,8 @@ void BuildDungeon()
     //递归拆分房间，生成二叉树
     SplitRoom(root);
     //先序遍历，打印二叉树
-    PreOrderTraverse(root, 0);
+    //PreOrderTraverse(root, 0);
+
     /* 根据二叉树建立地牢 */
     //初始化地牢
     InitDungeon();
@@ -472,9 +472,7 @@ void PutStairs(BiTree root, int stairs)
     int index;
     TElemType room;
     count = GetLeaves(root->lchild, &pLeaves);
-    printf("count: %d\n",count);
     index = rand() % count;
-    printf("index: %d\n",index);
     room = pLeaves[index]->data;
     x = room.x + 1 + rand() % (room.width - 2);
     y = room.y + 1 + rand() % (room.height - 2);
@@ -499,4 +497,3 @@ int main(void)
     } while (c != 'q');
     return 0;
 }
-//总结树结构的特点
