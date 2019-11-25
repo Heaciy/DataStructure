@@ -9,7 +9,7 @@ typedef struct Eventnode
     int occurTime;
     int type;
     struct Eventnode *next;
-} * Event, *EventList;
+}Event, *EventList;
 
 typedef struct QElemTypenode
 {
@@ -22,7 +22,7 @@ typedef struct LinkedQueuenode
 {
     QElemType front;
     QElemType rear;
-}LinkedQueue;
+} LinkedQueue;
 
 /* 初始化事件列表 */
 int InitList(EventList pList);
@@ -31,7 +31,7 @@ int OrderInsert(EventList pList, Event sEvent);
 /* 判断链表是否为空 */
 int EmptyList(EventList PList);
 /* 删除首节点 */
-int DelFirst(EventList pList, Event pEvent);
+int DelFirst(EventList pList, Event *pEvent);
 /* 遍历链表 */
 int ListTraverse(EventList pList);
 /* 初始化队列 */
@@ -67,29 +67,29 @@ void BankSimulation();
 
 int InitList(EventList pList)
 {
-    pList = (Event)malloc(sizeof(struct Eventnode));
-    if(pList == NULL)
+    pList = (Event*)malloc(sizeof(struct Eventnode));
+    if (pList == NULL)
     {
         printf("内存分配失败！");
         exit(-1);
     }
     else
-    return 1;
+        return 1;
 }
 
 int OrderInsert(EventList pList, Event sEvent)
 {
-    Event pAfter, pBefore;
+    Event *pAfter, *pBefore;
     pAfter = pList;
     pBefore = pList->next;
-    while ((pAfter != NULL) && ((sEvent->occurTime) > (pAfter->occurTime)))
+    while ((pAfter != NULL) && ((sEvent.occurTime) > (pAfter->occurTime)))
     {
         pBefore = pAfter;
         pAfter = pAfter->next;
     }
-    pBefore->next = (Event)malloc(sizeof(struct Eventnode));
-    pBefore->next->occurTime = sEvent->occurTime;
-    pBefore->next->type = sEvent->type;
+    pBefore->next = (Event*)malloc(sizeof(struct Eventnode));
+    pBefore->next->occurTime = sEvent.occurTime;
+    pBefore->next->type = sEvent.type;
     pBefore->next->next = pAfter;
     return 1;
 }
@@ -102,9 +102,9 @@ int EmptyList(EventList PList)
         return 0;
 }
 
-int DelFirst(EventList pList, Event pEvent)
+int DelFirst(EventList pList, Event *pEvent)
 {
-    Event temp;
+    Event *temp;
     if (EmptyList(pList))
     {
         printf("链表为空!\n");
@@ -122,7 +122,7 @@ int DelFirst(EventList pList, Event pEvent)
 
 int ListTraverse(EventList pList)
 {
-    Event temp;
+    Event *temp;
     temp = pList;
     while (temp->next != NULL)
     {
@@ -281,23 +281,23 @@ void CustomerArrived()
     int index;
     int arriveTime;
     int duration;
-    printf("当前时刻: 第%d分钟\n", gEvent->occurTime);
-    arriveTime = gEvent->occurTime + rand() % 5 + 1;
+    printf("当前时刻: 第%d分钟\n", gEvent.occurTime);
+    arriveTime = gEvent.occurTime + rand() % 5 + 1;
     duration = rand() % 21 + 10;
     if (arriveTime < gCloseTime)
     {
         gCustomerNum++;
-        sEvent->occurTime = arriveTime;
-        sEvent->type = 0;
+        sEvent.occurTime = arriveTime;
+        sEvent.type = 0;
         OrderInsert(gEventList, sEvent);
-        sQElem->arriveTime = gEvent->occurTime;
+        sQElem->arriveTime = gEvent.occurTime;
         sQElem->duration = duration;
         index = ShortestQueue();
         EnQueue(&gQueue[index], sQElem);
         if (QueueLength(&gQueue[index]) == 1)
         {
-            sEvent->occurTime = gEvent->occurTime + duration;
-            sEvent->type = index + 1;
+            sEvent.occurTime = gEvent.occurTime + duration;
+            sEvent.type = index + 1;
             OrderInsert(gEventList, sEvent);
         }
     }
@@ -307,15 +307,15 @@ void CustomerArrived()
 void CustomerLeaved()
 {
     Event sEvent;
-    int index = gEvent->type - 1;
+    int index = gEvent.type - 1;
     DelQueue(&gQueue[index], gCustomer);
-    printf("\n客服离开时间: %d", gEvent->occurTime);
+    printf("\n客服离开时间: %d", gEvent.occurTime);
     gTotalTime += gCustomer->duration;
     if (!EmptyQueue(&gQueue[index]))
     {
         GetHead(&gQueue[index], gCustomer);
-        sEvent->occurTime = gEvent->occurTime + gCustomer->duration;
-        sEvent->type = index + 1;
+        sEvent.occurTime = gEvent.occurTime + gCustomer->duration;
+        sEvent.type = index + 1;
         OrderInsert(gEventList, sEvent);
     }
 }
@@ -356,13 +356,13 @@ void BankSimulation()
 {
     srand((unsigned)time(NULL));
     Initialize();
-    gEvent->occurTime = 0;
-    gEvent->type = 0;
+    gEvent.occurTime = 0;
+    gEvent.type = 0;
     OrderInsert(gEventList, gEvent);
     while (!EmptyList(gEventList))
     {
-        DelFirst(gEventList, gEvent);
-        if (gEvent->type = 0)
+        DelFirst(gEventList, &gEvent);
+        if (gEvent.type = 0)
             CustomerArrived();
         else
             CustomerLeaved();
@@ -378,5 +378,5 @@ void BankSimulation()
 
 int main()
 {
-    Initialize();
+    BankSimulation();
 }
