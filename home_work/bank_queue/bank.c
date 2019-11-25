@@ -73,6 +73,8 @@ int InitList(EventList* pList)
         printf("ÄÚ´æ·ÖÅäÊ§°Ü£¡");
         exit(-1);
     }
+    (*pList)->occurTime = -1;
+    (*pList)->type = 0;
     (*pList)->next = NULL;
     return 1;
 }
