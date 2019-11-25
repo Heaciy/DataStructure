@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <malloc.h>
 #include <time.h>
-#define MAXSIZE 20 //é“¶è¡ŒæœåŠ¡çª—å£æœ€å¤§æ•°é‡
+#define MAXSIZE 20 //ÒøĞĞ·şÎñ´°¿Ú×î´óÊıÁ¿
 
 typedef struct Eventnode
 {
@@ -24,43 +24,45 @@ typedef struct LinkedQueuenode
     QElemType rear;
 } * LinkedQueue;
 
-/* æ’å…¥å…ƒç´  */
+/* ³õÊ¼»¯ÊÂ¼şÁĞ±í */
+int InitList(EventList pList);
+/* ²åÈëÔªËØ */
 int OrderInsert(EventList pList, Event sEvent);
-/* åˆ¤æ–­é“¾è¡¨æ˜¯å¦ä¸ºç©º */
+/* ÅĞ¶ÏÁ´±íÊÇ·ñÎª¿Õ */
 int EmptyList(EventList PList);
-/* åˆ é™¤é¦–èŠ‚ç‚¹ */
+/* É¾³ıÊ×½Úµã */
 int DelFirst(EventList pList, Event pEvent);
-/* éå†é“¾è¡¨ */
+/* ±éÀúÁ´±í */
 int ListTraverse(EventList pList);
-/* åˆå§‹åŒ–é˜Ÿåˆ— */
+/* ³õÊ¼»¯¶ÓÁĞ */
 int InitQueue(LinkedQueue pQueue);
-/* åˆ¤æ–­é“¾è¡¨æ˜¯å¦ä¸ºç©º */
+/* ÅĞ¶ÏÁ´±íÊÇ·ñÎª¿Õ */
 int EmptyQueue(LinkedQueue pQueue);
-/* é¦–èŠ‚ç‚¹å‡ºé˜Ÿ */
+/* Ê×½Úµã³ö¶Ó */
 int DelQueue(LinkedQueue pQueue, QElemType pQElem);
-/* èŠ‚ç‚¹å…¥é˜Ÿ */
+/* ½ÚµãÈë¶Ó */
 int EnQueue(LinkedQueue pQueue, QElemType sQElem);
-/* è·å–é˜Ÿåˆ—é•¿åº¦ */
+/* »ñÈ¡¶ÓÁĞ³¤¶È */
 int QueueLength(LinkedQueue pQueue);
-/* è·å–é˜Ÿåˆ—é¦–èŠ‚ç‚¹ */
+/* »ñÈ¡¶ÓÁĞÊ×½Úµã */
 int GetHead(LinkedQueue pQueue, QElemType pQElem);
-/* éå†é˜Ÿåˆ— */
+/* ±éÀú¶ÓÁĞ */
 int QueueTraverse(LinkedQueue pQueue);
 
 //bankservice.h
-/* åˆå§‹åŒ–æ•°æ®ï¼ˆå…³é—­æ—¶é—´å’Œçª—å£æ•°ï¼‰ */
+/* ³õÊ¼»¯Êı¾İ£¨¹Ø±ÕÊ±¼äºÍ´°¿ÚÊı£© */
 void Initialize();
-/* å¤„ç†é¡¾å®¢åˆ°è¾¾äº‹ä»¶ */
+/* ´¦Àí¹Ë¿Íµ½´ïÊÂ¼ş */
 void CustomerArrived();
-/* å¤„ç†é¡¾å®¢ç¦»å¼€äº‹ä»¶ */
+/* ´¦Àí¹Ë¿ÍÀë¿ªÊÂ¼ş */
 void CustomerLeaved();
-/* è·å–æœ€çŸ­é˜Ÿåˆ—ç¼–å· */
+/* »ñÈ¡×î¶Ì¶ÓÁĞ±àºÅ */
 int ShortestQueue();
-/* æ˜¾ç¤ºå½“å‰çª—å£é˜Ÿåˆ— */
+/* ÏÔÊ¾µ±Ç°´°¿Ú¶ÓÁĞ */
 void PrintQueue();
-/* æ˜¾ç¤ºå½“å‰å®è·µè¡¨ */
+/* ÏÔÊ¾µ±Ç°Êµ¼ù±í */
 void PrintEventList();
-/* é“¶è¡Œæ’é˜Ÿæ¨¡æ‹Ÿ */
+/* ÒøĞĞÅÅ¶ÓÄ£Äâ */
 void BankSimulation();
 
 int OrderInsert(EventList pList, Event sEvent)
@@ -75,6 +77,7 @@ int OrderInsert(EventList pList, Event sEvent)
     }
     pBefore->next = (Event)malloc(sizeof(struct Eventnode));
     pBefore->next->occurTime = sEvent->occurTime;
+    pBefore->next->type = sEvent->type;
     pBefore->next->next = pAfter;
     return 1;
 }
@@ -92,14 +95,14 @@ int DelFirst(EventList pList, Event pEvent)
     Event temp;
     if (EmptyList(pList))
     {
-        printf("Empty List!\n");
+        printf("Á´±íÎª¿Õ!\n");
         return 0;
     }
     else
     {
         temp = pList->next;
         pList->next = temp->next;
-        pEvent = temp;
+        *pEvent = *temp;
         free(temp);
         return 1;
     }
@@ -113,9 +116,9 @@ int ListTraverse(EventList pList)
     {
         temp = temp->next;
         if (temp->type == 0)
-            printf("The %d-st minute, next custom is comming.\n", temp->occurTime);
+            printf("µÚ %d ·ÖÖÓ, ÏÂÒ»Ãû¿Í»§¼´½«µ½À´.\n", temp->occurTime);
         else
-            printf("The %d-st minute, the %d-st custom is leaving.\n", temp->occurTime, temp->type);
+            printf("µÚ %d ·ÖÖÓ, %dºÅ´°¿ÚµÄ¹Ë¿Í¼´½«Àë¿ª.\n", temp->occurTime, temp->type);
     }
     printf("\n");
     return 1;
@@ -126,7 +129,7 @@ int InitQueue(LinkedQueue pQueue)
     pQueue->front = pQueue->rear = (QElemType)malloc(sizeof(struct QElemTypenode));
     if (pQueue->front == NULL)
     {
-        printf("Malloc Failed!\n");
+        printf("ÄÚ´æ·ÖÅäÊ§°Ü!\n");
         exit(-1);
     }
     pQueue->front->next = NULL;
@@ -146,13 +149,13 @@ int DelQueue(LinkedQueue pQueue, QElemType pQElem)
     QElemType temp;
     if (EmptyQueue(pQueue))
     {
-        printf("The queue is empty...\n");
+        printf("¶ÓÁĞÎª¿Õ£¬²»ÄÜ¼ÌĞø³ö¶ÓÁĞ\n");
         return 0;
     }
     else
     {
         temp = pQueue->front->next;
-        pQElem = temp;
+        *pQElem = *temp;
         pQueue->front->next = temp->next;
         if (pQueue->rear == temp)
             pQueue->rear = pQueue->front;
@@ -167,12 +170,12 @@ int EnQueue(LinkedQueue pQueue, QElemType sQElem)
     temp = (QElemType)malloc(sizeof(struct QElemTypenode));
     if (temp = NULL)
     {
-        printf("Malloc Faild!\n");
+        printf("ÄÚ´æ·ÖÅäÊ§°Ü!\n");
         exit(-1);
     }
     else
     {
-        temp = sQElem;
+        *temp = *sQElem;
         temp->next = NULL;
         pQueue->rear->next = temp;
         pQueue->rear = temp;
@@ -197,10 +200,10 @@ int GetHead(LinkedQueue pQueue, QElemType pQElem)
 {
     if (EmptyQueue(pQueue))
     {
-        printf("Empty Queue!\n");
+        printf("¶ÓÁĞÎª¿Õ!\n");
         return 0;
     }
-    pQElem = pQueue->front->next;
+    *pQElem = *(pQueue->front->next);
     return 1;
 }
 
@@ -209,13 +212,13 @@ int QueueTraverse(LinkedQueue pQueue)
     QElemType temp;
     if (EmptyQueue(pQueue))
     {
-        printf("Empty Queue!\n");
+        printf("¶ÓÁĞÎª¿Õ!\n");
         return 0;
     }
     temp = pQueue->front->next;
     while (temp != NULL)
     {
-        printf(">[Arrive Time: %d-st minute,server time: %d minute]\n", temp->arriveTime, temp->duration);
+        printf(">[µ½´ïÊ±¿Ì: µÚ%d·ÖÖÓ,·şÎñÊ±³¤: %d ·ÖÖÓ]\n", temp->arriveTime, temp->duration);
         temp = temp->next;
     }
     printf("\n");
@@ -223,40 +226,40 @@ int QueueTraverse(LinkedQueue pQueue)
 }
 
 /* BankService.cpp */
-int gWindowsNum;             //é“¶è¡ŒæœåŠ¡çª—å£æ•°
-int gCustomerNum;            //å®¢æˆ·æ€»äººæ•°
-int gTotalTime;              //æ€»æœåŠ¡æ—¶é—´
-int gCloseTime;              //é“¶è¡Œå…³é—­æ—¶é—´
-EventList gEventList;        //äº‹ä»¶åˆ—è¡¨
-Event gEvent;                //äº‹ä»¶
-LinkedQueue gQueue[MAXSIZE]; //é˜Ÿåˆ—æ•°ç»„
-QElemType gCustomer;         //é˜Ÿåˆ—èŠ‚ç‚¹
+int gWindowsNum;             //ÒøĞĞ·şÎñ´°¿ÚÊı
+int gCustomerNum;            //¿Í»§×ÜÈËÊı
+int gTotalTime;              //×Ü·şÎñÊ±¼ä
+int gCloseTime;              //ÒøĞĞ¹Ø±ÕÊ±¼ä
+EventList gEventList;        //ÊÂ¼şÁĞ±í
+Event gEvent;                //ÊÂ¼ş
+LinkedQueue gQueue[MAXSIZE]; //¶ÓÁĞÊı×é
+QElemType gCustomer;         //¶ÓÁĞ½Úµã
 
 void Initialize()
 {
     int i;
     gTotalTime = 0;
     gCustomer = 0;
-    Initialize(gEventList);
-    printf("Input the num of bank-window(1~20):");
+    InitList(gEventList);
+    printf("ÇëÊäÈëÒøĞĞ·şÎñ´°¿Ú¸öÊı(1~20):");
     scanf("%d", &gWindowsNum);
     while (gWindowsNum < 1 || gWindowsNum > MAXSIZE)
     {
-        printf("Input the num of bank-window(1~20):");
+        printf("ÇëÊäÈë1µ½%dÖ®¼äµÄÕûÊı:", MAXSIZE);
         scanf("%d", &gWindowsNum);
     }
-    //æœåŠ¡å…³é—­æ—¶é—´
-    printf("\n Input the closing time: ");
+    //·şÎñ¹Ø±ÕÊ±¼ä
+    printf("\n ÇëÊäÈë·şÎñ¹Ø±ÕÊ±¼ä(µ¥Î»£º·ÖÖÓ): ");
     scanf("%d", &gCloseTime);
     while (gCloseTime < 1)
     {
-        printf("The number you inputed must > 0,Input Again: ");
+        printf("ÇëÊäÈë´óÓÚÁãµÄÕûÊı: ");
         scanf("%d", &gCloseTime);
     }
-    //ä¸ºæ¯ä¸€ä¸ªçª—å£å»ºç«‹ä¸€ä¸ªç©ºé˜Ÿåˆ—
+    //ÎªÃ¿Ò»¸ö´°¿Ú½¨Á¢Ò»¸ö¿Õ¶ÓÁĞ
     for (i = 0; i < gWindowsNum; i++)
     {
-        Initialize(gQueue[i]);
+        InitQueue(gQueue[i]);
     }
 }
 
@@ -267,7 +270,7 @@ void CustomerArrived()
     int index;
     int arriveTime;
     int duration;
-    printf("The time now; %d-st minute\n", gEvent->occurTime);
+    printf("µ±Ç°Ê±¿Ì: µÚ%d·ÖÖÓ\n", gEvent->occurTime);
     arriveTime = gEvent->occurTime + rand() % 5 + 1;
     duration = rand() % 21 + 10;
     if (arriveTime < gCloseTime)
@@ -288,14 +291,14 @@ void CustomerArrived()
         }
     }
     else
-        printf("\nThe service is closed!\n");
+        printf("\nÅÅ¶Ó·şÎñÒÑ¹Ø±Õ£¬²»ÔÙ½ÓÊÜĞÂ¿Í»§£¡\n");
 }
 void CustomerLeaved()
 {
     Event sEvent;
     int index = gEvent->type - 1;
     DelQueue(gQueue[index], gCustomer);
-    printf("\n The custom's leaving time: %d", gEvent->occurTime);
+    printf("\n¿Í·şÀë¿ªÊ±¼ä: %d", gEvent->occurTime);
     gTotalTime += gCustomer->duration;
     if (!EmptyQueue(gQueue[index]))
     {
@@ -325,17 +328,17 @@ int ShortestQueue()
 void PrintQueue()
 {
     int i;
-    printf("\n The statement of Windows: \n");
+    printf("\n´°¿ÚÅÅ¶Ó×´Ì¬: \n");
     for (i = 0; i < gWindowsNum; i++)
     {
-        printf("%d-st window: \n", i);
+        printf("%dºÅ´°¿Ú: \n", i);
         QueueTraverse(gQueue[i]);
     }
     printf("\n");
 }
 void PrintEventList()
 {
-    printf("\n The statement of event-table: \n");
+    printf("\nÊÂ¼ş±í×´Ì¬: \n");
     ListTraverse(gEventList);
 }
 void BankSimulation()
@@ -358,7 +361,7 @@ void BankSimulation()
         printf("\n");
     }
     printf("\n");
-    printf("The AVR servicing time: %f minute\n", (float)gTotalTime / gCustomerNum);
+    printf("¿Í»§Æ½¾ù·şÎñÊ±¼ä: %f·ÖÖÓ\n", (float)gTotalTime / gCustomerNum);
     system("pause");
 }
 
