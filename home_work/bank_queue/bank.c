@@ -22,7 +22,7 @@ typedef struct LinkedQueuenode
 {
     QElemType front;
     QElemType rear;
-} * LinkedQueue;
+}LinkedQueue;
 
 /* 初始化事件列表 */
 int InitList(EventList pList);
@@ -35,19 +35,19 @@ int DelFirst(EventList pList, Event pEvent);
 /* 遍历链表 */
 int ListTraverse(EventList pList);
 /* 初始化队列 */
-int InitQueue(LinkedQueue pQueue);
+int InitQueue(LinkedQueue *pQueue);
 /* 判断链表是否为空 */
-int EmptyQueue(LinkedQueue pQueue);
+int EmptyQueue(LinkedQueue *pQueue);
 /* 首节点出队 */
-int DelQueue(LinkedQueue pQueue, QElemType pQElem);
+int DelQueue(LinkedQueue *pQueue, QElemType pQElem);
 /* 节点入队 */
-int EnQueue(LinkedQueue pQueue, QElemType sQElem);
+int EnQueue(LinkedQueue *pQueue, QElemType sQElem);
 /* 获取队列长度 */
-int QueueLength(LinkedQueue pQueue);
+int QueueLength(LinkedQueue *pQueue);
 /* 获取队列首节点 */
-int GetHead(LinkedQueue pQueue, QElemType pQElem);
+int GetHead(LinkedQueue *pQueue, QElemType pQElem);
 /* 遍历队列 */
-int QueueTraverse(LinkedQueue pQueue);
+int QueueTraverse(LinkedQueue *pQueue);
 
 //bankservice.h
 /* 初始化数据（关闭时间和窗口数） */
@@ -64,6 +64,18 @@ void PrintQueue();
 void PrintEventList();
 /* 银行排队模拟 */
 void BankSimulation();
+
+int InitList(EventList pList)
+{
+    pList = (Event)malloc(sizeof(struct Eventnode));
+    if(pList == NULL)
+    {
+        printf("内存分配失败！");
+        exit(-1);
+    }
+    else
+    return 1;
+}
 
 int OrderInsert(EventList pList, Event sEvent)
 {
@@ -124,7 +136,7 @@ int ListTraverse(EventList pList)
     return 1;
 }
 
-int InitQueue(LinkedQueue pQueue)
+int InitQueue(LinkedQueue *pQueue)
 {
     pQueue->front = pQueue->rear = (QElemType)malloc(sizeof(struct QElemTypenode));
     if (pQueue->front == NULL)
@@ -136,7 +148,7 @@ int InitQueue(LinkedQueue pQueue)
     return 1;
 }
 
-int EmptyQueue(LinkedQueue pQueue)
+int EmptyQueue(LinkedQueue *pQueue)
 {
     if (pQueue->front == pQueue->rear)
         return 1;
@@ -144,7 +156,7 @@ int EmptyQueue(LinkedQueue pQueue)
         return 0;
 }
 
-int DelQueue(LinkedQueue pQueue, QElemType pQElem)
+int DelQueue(LinkedQueue *pQueue, QElemType pQElem)
 {
     QElemType temp;
     if (EmptyQueue(pQueue))
@@ -164,7 +176,7 @@ int DelQueue(LinkedQueue pQueue, QElemType pQElem)
     }
 }
 
-int EnQueue(LinkedQueue pQueue, QElemType sQElem)
+int EnQueue(LinkedQueue *pQueue, QElemType sQElem)
 {
     QElemType temp;
     temp = (QElemType)malloc(sizeof(struct QElemTypenode));
@@ -183,7 +195,7 @@ int EnQueue(LinkedQueue pQueue, QElemType sQElem)
     return 1;
 }
 
-int QueueLength(LinkedQueue pQueue)
+int QueueLength(LinkedQueue *pQueue)
 {
     QElemType temp;
     int count = 0;
@@ -196,7 +208,7 @@ int QueueLength(LinkedQueue pQueue)
     return count;
 }
 
-int GetHead(LinkedQueue pQueue, QElemType pQElem)
+int GetHead(LinkedQueue *pQueue, QElemType pQElem)
 {
     if (EmptyQueue(pQueue))
     {
@@ -207,7 +219,7 @@ int GetHead(LinkedQueue pQueue, QElemType pQElem)
     return 1;
 }
 
-int QueueTraverse(LinkedQueue pQueue)
+int QueueTraverse(LinkedQueue *pQueue)
 {
     QElemType temp;
     if (EmptyQueue(pQueue))
@@ -249,7 +261,7 @@ void Initialize()
         scanf("%d", &gWindowsNum);
     }
     //服务关闭时间
-    printf("\n 请输入服务关闭时间(单位：分钟): ");
+    printf("\n请输入服务关闭时间(单位：分钟): ");
     scanf("%d", &gCloseTime);
     while (gCloseTime < 1)
     {
@@ -259,10 +271,9 @@ void Initialize()
     //为每一个窗口建立一个空队列
     for (i = 0; i < gWindowsNum; i++)
     {
-        InitQueue(gQueue[i]);
+        InitQueue(&gQueue[i]);
     }
 }
-
 void CustomerArrived()
 {
     QElemType sQElem;
@@ -282,8 +293,8 @@ void CustomerArrived()
         sQElem->arriveTime = gEvent->occurTime;
         sQElem->duration = duration;
         index = ShortestQueue();
-        EnQueue(gQueue[index], sQElem);
-        if (QueueLength(gQueue[index]) == 1)
+        EnQueue(&gQueue[index], sQElem);
+        if (QueueLength(&gQueue[index]) == 1)
         {
             sEvent->occurTime = gEvent->occurTime + duration;
             sEvent->type = index + 1;
@@ -297,12 +308,12 @@ void CustomerLeaved()
 {
     Event sEvent;
     int index = gEvent->type - 1;
-    DelQueue(gQueue[index], gCustomer);
+    DelQueue(&gQueue[index], gCustomer);
     printf("\n客服离开时间: %d", gEvent->occurTime);
     gTotalTime += gCustomer->duration;
-    if (!EmptyQueue(gQueue[index]))
+    if (!EmptyQueue(&gQueue[index]))
     {
-        GetHead(gQueue[index], gCustomer);
+        GetHead(&gQueue[index], gCustomer);
         sEvent->occurTime = gEvent->occurTime + gCustomer->duration;
         sEvent->type = index + 1;
         OrderInsert(gEventList, sEvent);
@@ -316,7 +327,7 @@ int ShortestQueue()
     int length = 0;
     for (i = 0; i < gWindowsNum; i++)
     {
-        length = QueueLength(gQueue[i]);
+        length = QueueLength(&gQueue[i]);
         if (min > length)
         {
             min = length;
@@ -332,7 +343,7 @@ void PrintQueue()
     for (i = 0; i < gWindowsNum; i++)
     {
         printf("%d号窗口: \n", i);
-        QueueTraverse(gQueue[i]);
+        QueueTraverse(&gQueue[i]);
     }
     printf("\n");
 }
@@ -367,5 +378,5 @@ void BankSimulation()
 
 int main()
 {
-    return 0;
+    Initialize();
 }
